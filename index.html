@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RidePro</title><link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<header>
+  <div class="brand"><span>🚕</span><span id="brandName">Ride<b>Pro</b></span></div>
+  <nav>
+    <button class="active" data-scroll="bookingSection">Viajes</button>
+    <button data-scroll="servicesSection">Servicios</button>
+    <button data-scroll="busSection">Horarios de buses</button>
+    <a href="admin/">Administración</a>
+  </nav>
+</header>
+<main>
+  <div id="announcement" class="notice"></div>
+  <section class="hero section" id="bookingSection">
+    <div class="card map"><div class="road"></div><div class="car" id="car">🚕</div>
+      <div class="booking">
+        <div class="grid grid-2">
+          <div class="field"><label>Nombre</label><input id="passengerName" placeholder="Tu nombre"></div>
+          <div class="field"><label>Teléfono</label><input id="passengerPhone" inputmode="tel" placeholder="Ej. +56 9 1234 5678"></div>
+        </div>
+        <div class="field"><label>¿Dónde te recogemos?</label><input id="origin" placeholder="Dirección de origen"></div>
+        <div class="field"><label>¿A dónde vas?</label><input id="destination" placeholder="Dirección de destino"></div>
+        <div class="field"><label>Servicio</label><select id="serviceSelect"></select></div>
+        <button class="btn btn-primary btn-block" id="requestBtn">Calcular y solicitar viaje</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Información del viaje</h2><span class="badge" id="tripStatus">Pendiente</span></div>
+      <div class="card-body">
+        <div class="service"><span>📍</span><div><strong>Recogida</strong><small id="originText">Sin definir</small></div></div>
+        <div class="service"><span>🏁</span><div><strong>Destino</strong><small id="destinationText">Sin definir</small></div></div>
+        <div class="service"><span>🚘</span><div><strong>Servicio</strong><small id="serviceText">Selecciona una opción</small></div></div>
+        <div class="service"><span>💳</span><div><strong>Precio estimado</strong><small id="priceText">Se mostrará antes de confirmar</small></div></div>
+        <button class="btn btn-dark btn-block" id="confirmBtn" disabled>Confirmar solicitud</button>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="servicesSection"><div class="card"><div class="card-head"><h2>Servicios disponibles</h2><span>Selecciona una opción</span></div><div class="card-body"><div id="servicesList" class="grid grid-3"></div></div></div></section>
+  <section class="section" id="busSection"><div class="card"><div class="card-head"><h2>Horarios de buses</h2><span>Información actualizada desde administración</span></div><div class="card-body"><div class="field"><label>Filtrar por ruta, origen o destino</label><input id="busSearch" placeholder="Ejemplo: Aeropuerto"></div><div id="busList" class="bus-list"></div></div></div></section>
+  <section class="section grid grid-4" id="metricsSection"><div class="metric"><span>Conductores activos</span><strong>124</strong></div><div class="metric"><span>Viajes hoy</span><strong id="todayTrips">0</strong></div><div class="metric"><span>Tiempo promedio</span><strong>4 min</strong></div><div class="metric"><span>Calificación</span><strong>4,9 ⭐</strong></div></section>
+  <section class="section" id="safetySection"><div class="card"><div class="card-head"><h2>Seguridad</h2></div><div class="card-body grid grid-3"><div class="service"><span>🛡️</span><div><strong>Conductores verificados</strong><small>Documentos y vehículo validados.</small></div></div><div class="service"><span>📡</span><div><strong>Seguimiento del viaje</strong><small>Estado visible desde administración.</small></div></div><div class="service"><span>🆘</span><div><strong>Datos de contacto</strong><small>La solicitud registra el teléfono del pasajero.</small></div></div></div></div></section>
+</main>
+<div class="modal hidden" id="successModal"><div class="card modal-card"><div class="card-body"><h2>✅ Solicitud registrada</h2><p id="successText"></p><button class="btn btn-primary btn-block" id="closeModal">Aceptar</button></div></div></div>
+<div class="toast" id="toast"></div><script src="assets/app.js"></script>
+</body></html>
