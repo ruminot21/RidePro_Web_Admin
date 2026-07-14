@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RidePro</title><link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<header>
+  <div class="brand"><span>🚕</span><span id="brandName">Ride<b>Pro</b></span></div>
+  <nav>
+    <button class="active" data-scroll="bookingSection">Viajes</button>
+    <button data-scroll="servicesSection">Servicios</button>
+    <button data-scroll="busSection">Horarios de buses</button>
+    <a href="admin/">Administración</a>
+  </nav>
+</header>
+
+<main>
+  <div id="announcement" class="notice"></div>
+
+  <section class="hero section" id="bookingSection">
+    <div class="card map">
+      <div class="road"></div><div class="car">🚕</div>
+      <div class="booking">
+        <div class="field"><label>¿Dónde te recogemos?</label><input id="origin" value="Terminal Central"></div>
+        <div class="field"><label>¿A dónde vas?</label><input id="destination" value="Aeropuerto"></div>
+        <button class="btn btn-primary btn-block" id="requestBtn">Buscar conductor</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Información del viaje</h2><span class="badge">En línea</span></div>
+      <div class="card-body">
+        <div class="service"><span>📍</span><div><strong>Recogida</strong><small id="originText">Terminal Central</small></div></div>
+        <div class="service"><span>🏁</span><div><strong>Destino</strong><small id="destinationText">Aeropuerto</small></div></div>
+        <div class="service"><span>💳</span><div><strong>Método de pago</strong><small>Efectivo o tarjeta</small></div></div>
+        <button class="btn btn-dark btn-block" id="confirmBtn">Confirmar solicitud</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="servicesSection">
+    <div class="card">
+      <div class="card-head"><h2>Servicios disponibles</h2><span>Selecciona una opción</span></div>
+      <div class="card-body"><div id="servicesList" class="grid grid-3"></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="busSection">
+    <div class="card">
+      <div class="card-head"><h2>Horarios de buses</h2><span>Información actualizada desde administración</span></div>
+      <div class="card-body">
+        <div class="field"><label>Filtrar por ruta, origen o destino</label><input id="busSearch" placeholder="Ejemplo: Aeropuerto"></div>
+        <div id="busList" class="bus-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section grid grid-4" id="metricsSection">
+    <div class="metric"><span>Conductores activos</span><strong>124</strong></div>
+    <div class="metric"><span>Viajes hoy</span><strong>1.250</strong></div>
+    <div class="metric"><span>Tiempo promedio</span><strong>4 min</strong></div>
+    <div class="metric"><span>Calificación</span><strong>4,9 ⭐</strong></div>
+  </section>
+
+  <section class="section" id="safetySection">
+    <div class="card"><div class="card-head"><h2>Seguridad</h2></div><div class="card-body grid grid-3">
+      <div class="service"><span>🛡️</span><div><strong>Conductores verificados</strong><small>Documentos y vehículo validados.</small></div></div>
+      <div class="service"><span>📡</span><div><strong>Seguimiento del viaje</strong><small>Ubicación compartida en tiempo real.</small></div></div>
+      <div class="service"><span>🆘</span><div><strong>Botón de emergencia</strong><small>Acceso rápido al centro de soporte.</small></div></div>
+    </div></div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+<script src="assets/app.js"></script>
+</body></html>
