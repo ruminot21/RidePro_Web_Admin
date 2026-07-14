@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RidePro Admin</title><link rel="stylesheet" href="../assets/styles.css"></head>
+<body>
+<div id="loginView" class="login-wrap">
+  <div class="card login-card">
+    <div class="card-body">
+      <h1>Administración</h1><p style="color:var(--muted)">Acceso de demostración para gestionar la página.</p>
+      <div class="field"><label>Usuario</label><input id="loginUser" value="admin"></div>
+      <div class="field"><label>Contraseña</label><input id="loginPass" type="password" value="admin123"></div>
+      <button class="btn btn-primary btn-block" id="loginBtn">Entrar</button>
+      <small style="display:block;margin-top:12px;color:var(--muted)">Demo: admin / admin123. Cambia esto antes de publicar.</small>
+    </div>
+  </div>
+</div>
+
+<div id="adminView" class="admin-shell hidden">
+  <aside class="admin-side">
+    <h1>Ride<b style="color:var(--brand)">Pro</b></h1>
+    <button class="active" data-panel="settingsPanel">⚙️ Ajustes</button>
+    <button data-panel="visibilityPanel">👁️ Qué mostrar</button>
+    <button data-panel="busesPanel">🚌 Horarios de buses</button>
+    <button data-panel="servicesPanel">🚘 Servicios</button>
+    <a href="../">← Ver página pública</a>
+    <button id="logoutBtn">Cerrar sesión</button>
+  </aside>
+  <main class="admin-main">
+    <div class="toolbar"><div><h1 style="margin:0">Panel administrativo</h1><p style="color:var(--muted)">Los cambios quedan guardados en este navegador.</p></div><button class="btn btn-primary" id="saveAll">Guardar cambios</button></div>
+
+    <section id="settingsPanel" class="admin-panel card">
+      <div class="card-head"><h2>Ajustes generales</h2></div><div class="card-body">
+        <div class="field"><label>Nombre del sitio</label><input id="siteName"></div>
+        <div class="field"><label>Aviso principal</label><textarea id="announcement" rows="4"></textarea></div>
+      </div>
+    </section>
+
+    <section id="visibilityPanel" class="admin-panel card hidden">
+      <div class="card-head"><h2>Seleccionar qué quieres que se muestre</h2></div><div class="card-body">
+        <div class="switch-row"><div><strong>Solicitud de viajes</strong><small style="display:block;color:var(--muted)">Mapa y formulario principal</small></div><label class="switch"><input id="showBooking" type="checkbox"><span class="slider"></span></label></div>
+        <div class="switch-row"><div><strong>Servicios</strong><small style="display:block;color:var(--muted)">Económico, Comfort, Premium</small></div><label class="switch"><input id="showServices" type="checkbox"><span class="slider"></span></label></div>
+        <div class="switch-row"><div><strong>Horarios de buses</strong><small style="display:block;color:var(--muted)">Listado público de recorridos</small></div><label class="switch"><input id="showBusSchedules" type="checkbox"><span class="slider"></span></label></div>
+        <div class="switch-row"><div><strong>Estadísticas</strong></div><label class="switch"><input id="showMetrics" type="checkbox"><span class="slider"></span></label></div>
+        <div class="switch-row"><div><strong>Información de seguridad</strong></div><label class="switch"><input id="showSafety" type="checkbox"><span class="slider"></span></label></div>
+      </div>
+    </section>
+
+    <section id="busesPanel" class="admin-panel card hidden">
+      <div class="card-head"><h2>Horarios de buses</h2><button class="btn btn-dark" id="addBus">Agregar horario</button></div>
+      <div class="card-body"><div id="busEditor"></div></div>
+    </section>
+
+    <section id="servicesPanel" class="admin-panel card hidden">
+      <div class="card-head"><h2>Servicios visibles</h2><button class="btn btn-dark" id="addService">Agregar servicio</button></div>
+      <div class="card-body"><div id="serviceEditor"></div></div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../assets/admin.js"></script>
+</body></html>
