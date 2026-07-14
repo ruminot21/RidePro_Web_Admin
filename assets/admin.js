@@ -1,55 +1,21 @@
-
-const DEFAULT_CONFIG={"siteName": "RidePro", "showBooking": true, "showServices": true, "showBusSchedules": true, "showMetrics": true, "showSafety": true, "announcement": "Servicio disponible todos los días. Revisa los horarios de buses antes de viajar.", "services": [{"name": "Económico", "description": "1 a 4 pasajeros", "price": "$12.500"}, {"name": "Comfort", "description": "Más espacio y comodidad", "price": "$18.900"}, {"name": "Premium", "description": "Vehículo ejecutivo", "price": "$27.500"}], "buses": [{"route": "B-101", "from": "Terminal Central", "to": "Aeropuerto", "time": "06:30", "days": "Lunes a domingo"}, {"route": "B-205", "from": "Centro", "to": "Zona Norte", "time": "08:00", "days": "Lunes a viernes"}, {"route": "B-310", "from": "Terminal Sur", "to": "Centro", "time": "17:45", "days": "Todos los días"}]};
-let config;
-const toast=m=>{const e=document.getElementById("toast");e.textContent=m;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2200)};
-const load=()=>{try{config={...DEFAULT_CONFIG,...JSON.parse(localStorage.getItem("ridepro_config")||"{}")}}catch{config=structuredClone(DEFAULT_CONFIG)}};
-const showAdmin=()=>{document.getElementById("loginView").classList.add("hidden");document.getElementById("adminView").classList.remove("hidden");fill()};
-if(sessionStorage.getItem("ridepro_admin")==="1")showAdmin();
-document.getElementById("loginBtn").onclick=()=>{
- if(document.getElementById("loginUser").value==="admin"&&document.getElementById("loginPass").value==="admin123"){sessionStorage.setItem("ridepro_admin","1");showAdmin()}else toast("Usuario o contraseña incorrectos");
-};
-document.getElementById("logoutBtn").onclick=()=>{sessionStorage.removeItem("ridepro_admin");location.reload()};
-document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{
- document.querySelectorAll(".admin-panel").forEach(p=>p.classList.add("hidden"));document.getElementById(b.dataset.panel).classList.remove("hidden");
- document.querySelectorAll("[data-panel]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
-});
-function fill(){
- load();
- ["siteName","announcement"].forEach(id=>document.getElementById(id).value=config[id]);
- ["showBooking","showServices","showBusSchedules","showMetrics","showSafety"].forEach(id=>document.getElementById(id).checked=!!config[id]);
- renderBuses();renderServices();
-}
-function renderBuses(){
- document.getElementById("busEditor").innerHTML=config.buses.map((b,i)=>`
- <div class="card-body" style="border:1px solid var(--line);border-radius:14px;margin-bottom:12px">
-  <div class="grid grid-2">
-   <div class="field"><label>Ruta</label><input data-bus="${i}" data-key="route" value="${b.route}"></div>
-   <div class="field"><label>Hora</label><input type="time" data-bus="${i}" data-key="time" value="${b.time}"></div>
-   <div class="field"><label>Origen</label><input data-bus="${i}" data-key="from" value="${b.from}"></div>
-   <div class="field"><label>Destino</label><input data-bus="${i}" data-key="to" value="${b.to}"></div>
-  </div>
-  <div class="field"><label>Días</label><input data-bus="${i}" data-key="days" value="${b.days}"></div>
-  <button class="btn btn-danger" onclick="removeBus(${i})">Eliminar</button>
- </div>`).join("");
- document.querySelectorAll("[data-bus]").forEach(e=>e.oninput=()=>config.buses[+e.dataset.bus][e.dataset.key]=e.value);
-}
-function renderServices(){
- document.getElementById("serviceEditor").innerHTML=config.services.map((s,i)=>`
- <div class="grid grid-3" style="padding:12px;border-bottom:1px solid var(--line)">
-  <div class="field"><label>Nombre</label><input data-service="${i}" data-key="name" value="${s.name}"></div>
-  <div class="field"><label>Descripción</label><input data-service="${i}" data-key="description" value="${s.description}"></div>
-  <div class="field"><label>Precio</label><input data-service="${i}" data-key="price" value="${s.price}"><button class="btn btn-danger" onclick="removeService(${i})">Eliminar</button></div>
- </div>`).join("");
- document.querySelectorAll("[data-service]").forEach(e=>e.oninput=()=>config.services[+e.dataset.service][e.dataset.key]=e.value);
-}
-window.removeBus=i=>{config.buses.splice(i,1);renderBuses()};
-window.removeService=i=>{config.services.splice(i,1);renderServices()};
-document.getElementById("addBus").onclick=()=>{config.buses.push({route:"Nueva",from:"Origen",to:"Destino",time:"08:00",days:"Lunes a viernes"});renderBuses()};
-document.getElementById("addService").onclick=()=>{config.services.push({name:"Nuevo servicio",description:"Descripción",price:"$0"});renderServices()};
-document.getElementById("saveAll").onclick=()=>{
- config.siteName=document.getElementById("siteName").value.trim()||"RidePro";
- config.announcement=document.getElementById("announcement").value.trim();
- ["showBooking","showServices","showBusSchedules","showMetrics","showSafety"].forEach(id=>config[id]=document.getElementById(id).checked);
- localStorage.setItem("ridepro_config",JSON.stringify(config));toast("Cambios guardados");
-};
+const DEFAULT_CONFIG={siteName:"RidePro",showBooking:true,showServices:true,showBusSchedules:true,showMetrics:true,showSafety:true,announcement:"Servicio disponible todos los días. Revisa los horarios de buses antes de viajar.",services:[{name:"Económico",description:"1 a 4 pasajeros",price:"$12.500"},{name:"Comfort",description:"Más espacio y comodidad",price:"$18.900"},{name:"Premium",description:"Vehículo ejecutivo",price:"$27.500"}],buses:[{route:"B-101",from:"Terminal Central",to:"Aeropuerto",time:"06:30",days:"Lunes a domingo"},{route:"B-205",from:"Centro",to:"Zona Norte",time:"08:00",days:"Lunes a viernes"},{route:"B-310",from:"Terminal Sur",to:"Centro",time:"17:45",days:"Todos los días"}]};
+const clone=o=>JSON.parse(JSON.stringify(o)),safe=s=>String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+let config=clone(DEFAULT_CONFIG),requests=[];const toast=m=>{const e=document.getElementById("toast");e.textContent=m;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2200)};
+const load=()=>{try{config={...clone(DEFAULT_CONFIG),...JSON.parse(localStorage.getItem("ridepro_config")||"{}")}}catch{config=clone(DEFAULT_CONFIG)}try{requests=JSON.parse(localStorage.getItem("ridepro_requests")||"[]")}catch{requests=[]}};
+const creds=()=>{try{return JSON.parse(localStorage.getItem("ridepro_credentials")||'{"user":"admin","pass":"admin123"}')}catch{return{user:"admin",pass:"admin123"}}};
+const showAdmin=()=>{loginView.classList.add("hidden");adminView.classList.remove("hidden");fill()};if(sessionStorage.getItem("ridepro_admin")==="1")showAdmin();
+loginBtn.onclick=()=>{const c=creds();if(loginUser.value===c.user&&loginPass.value===c.pass){sessionStorage.setItem("ridepro_admin","1");showAdmin()}else toast("Usuario o contraseña incorrectos")};loginPass.onkeydown=e=>{if(e.key==="Enter")loginBtn.click()};logoutBtn.onclick=()=>{sessionStorage.removeItem("ridepro_admin");location.reload()};
+document.querySelectorAll("[data-panel]").forEach(b=>b.onclick=()=>{document.querySelectorAll(".admin-panel").forEach(p=>p.classList.add("hidden"));document.getElementById(b.dataset.panel).classList.remove("hidden");document.querySelectorAll("[data-panel]").forEach(x=>x.classList.remove("active"));b.classList.add("active")});
+function fill(){load();siteName.value=config.siteName;announcement.value=config.announcement;visibilityOptions.innerHTML=[["showBooking","Solicitud de viajes"],["showServices","Servicios"],["showBusSchedules","Horarios de buses"],["showMetrics","Estadísticas"],["showSafety","Seguridad"]].map(([id,label])=>`<div class="switch-row"><strong>${label}</strong><label class="switch"><input id="${id}" type="checkbox" ${config[id]?"checked":""}><span class="slider"></span></label></div>`).join("");renderBuses();renderServices();renderRequests()}
+function renderRequests(filter=""){const f=filter.toLowerCase(),rows=requests.filter(r=>Object.values(r).join(" ").toLowerCase().includes(f));requestEditor.innerHTML=rows.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Código / Fecha</th><th>Pasajero</th><th>Ruta</th><th>Servicio</th><th>Estado</th><th></th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${safe(r.id)}</b><small>${new Date(r.createdAt).toLocaleString()}</small></td><td>${safe(r.name)}<small>${safe(r.phone)}</small></td><td>${safe(r.origin)} → ${safe(r.destination)}</td><td>${safe(r.service)}<small>${safe(r.price)}</small></td><td><select data-status="${safe(r.id)}">${["Pendiente","Asignado","En camino","Completado","Cancelado"].map(s=>`<option ${r.status===s?"selected":""}>${s}</option>`).join("")}</select></td><td><button class="btn btn-danger" data-delete-request="${safe(r.id)}">Eliminar</button></td></tr>`).join("")}</tbody></table></div>`:"<p>No hay solicitudes registradas.</p>";document.querySelectorAll("[data-status]").forEach(e=>e.onchange=()=>{const r=requests.find(x=>x.id===e.dataset.status);if(r)r.status=e.value;saveRequests();toast("Estado actualizado")});document.querySelectorAll("[data-delete-request]").forEach(b=>b.onclick=()=>{requests=requests.filter(r=>r.id!==b.dataset.deleteRequest);saveRequests();renderRequests(requestSearch.value)})}
+function saveRequests(){localStorage.setItem("ridepro_requests",JSON.stringify(requests))}
+function renderBuses(){busEditor.innerHTML=config.buses.map((b,i)=>`<div class="editor-card"><div class="grid grid-2"><div class="field"><label>Ruta</label><input data-bus="${i}" data-key="route" value="${safe(b.route)}"></div><div class="field"><label>Hora</label><input type="time" data-bus="${i}" data-key="time" value="${safe(b.time)}"></div><div class="field"><label>Origen</label><input data-bus="${i}" data-key="from" value="${safe(b.from)}"></div><div class="field"><label>Destino</label><input data-bus="${i}" data-key="to" value="${safe(b.to)}"></div></div><div class="field"><label>Días</label><input data-bus="${i}" data-key="days" value="${safe(b.days)}"></div><button class="btn btn-danger" data-remove-bus="${i}">Eliminar</button></div>`).join("");document.querySelectorAll("[data-bus]").forEach(e=>e.oninput=()=>config.buses[+e.dataset.bus][e.dataset.key]=e.value);document.querySelectorAll("[data-remove-bus]").forEach(b=>b.onclick=()=>{config.buses.splice(+b.dataset.removeBus,1);renderBuses()})}
+function renderServices(){serviceEditor.innerHTML=config.services.map((s,i)=>`<div class="editor-card grid grid-3"><div class="field"><label>Nombre</label><input data-service="${i}" data-key="name" value="${safe(s.name)}"></div><div class="field"><label>Descripción</label><input data-service="${i}" data-key="description" value="${safe(s.description)}"></div><div class="field"><label>Precio</label><input data-service="${i}" data-key="price" value="${safe(s.price)}"><button class="btn btn-danger" data-remove-service="${i}">Eliminar</button></div></div>`).join("");document.querySelectorAll("[data-service]").forEach(e=>e.oninput=()=>config.services[+e.dataset.service][e.dataset.key]=e.value);document.querySelectorAll("[data-remove-service]").forEach(b=>b.onclick=()=>{config.services.splice(+b.dataset.removeService,1);renderServices()})}
+addBus.onclick=()=>{config.buses.push({route:"Nueva",from:"Origen",to:"Destino",time:"08:00",days:"Lunes a viernes"});renderBuses()};addService.onclick=()=>{config.services.push({name:"Nuevo servicio",description:"Descripción",price:"$0"});renderServices()};requestSearch.oninput=e=>renderRequests(e.target.value);
+saveAll.onclick=()=>{config.siteName=siteName.value.trim()||"RidePro";config.announcement=announcement.value.trim();["showBooking","showServices","showBusSchedules","showMetrics","showSafety"].forEach(id=>config[id]=document.getElementById(id).checked);localStorage.setItem("ridepro_config",JSON.stringify(config));toast("Cambios guardados")};
+saveCredentials.onclick=()=>{const u=newUser.value.trim(),p=newPass.value;if(!u||p.length<6)return toast("Usa un usuario y una contraseña de mínimo 6 caracteres");localStorage.setItem("ridepro_credentials",JSON.stringify({user:u,pass:p}));newUser.value=newPass.value="";toast("Acceso actualizado")};
+clearRequests.onclick=()=>{if(confirm("¿Eliminar todas las solicitudes?")){requests=[];saveRequests();renderRequests();toast("Solicitudes eliminadas")}};
+const download=(name,text,type)=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();URL.revokeObjectURL(a.href)};
+exportRequests.onclick=()=>{const q='"';const esc=v=>q+String(v??"").replaceAll(q,q+q)+q;download("ridepro_solicitudes.csv",["Código,Fecha,Nombre,Teléfono,Origen,Destino,Servicio,Precio,Estado",...requests.map(r=>[r.id,r.createdAt,r.name,r.phone,r.origin,r.destination,r.service,r.price,r.status].map(esc).join(","))].join("\n"),"text/csv;charset=utf-8")};
+exportConfig.onclick=()=>download("ridepro_config.json",JSON.stringify(config,null,2),"application/json");importConfig.onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());config={...clone(DEFAULT_CONFIG),...data};localStorage.setItem("ridepro_config",JSON.stringify(config));fill();toast("Configuración importada")}catch{toast("Archivo JSON inválido")}};resetConfig.onclick=()=>{if(confirm("¿Restablecer la configuración?")){config=clone(DEFAULT_CONFIG);localStorage.setItem("ridepro_config",JSON.stringify(config));fill();toast("Configuración restablecida")}};
 load();
